@@ -15,7 +15,7 @@ namespace ProviderQuality.Tests
             {
                 Awards = new List<Award>
                 {
-                    new Award {Name = "Blue Distinction Plus", SellIn = 0, Quality = 80}
+                    new Award {Name = "Blue Distinction Plus", ExpiresIn = 0, Quality = 80}
                 }
             };
 
@@ -24,6 +24,7 @@ namespace ProviderQuality.Tests
             Assert.IsTrue(app.Awards[0].Quality == 80);
 
             app.UpdateQuality();
+
 
             Assert.IsTrue(app.Awards[0].Quality == 80);
         }
