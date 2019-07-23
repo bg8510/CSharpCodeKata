@@ -10,7 +10,7 @@ namespace ProviderQuality.Console
     {
         public string Name { get; set; }
 
-        public int SellIn { get; set; }
+        public int ExpiresIn { get; set; }
 
         public int Quality { get; set; }
     }

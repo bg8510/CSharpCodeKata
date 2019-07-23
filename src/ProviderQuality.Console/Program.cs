@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;                                                  // Brooks
 
 namespace ProviderQuality.Console
 {
@@ -18,19 +19,23 @@ namespace ProviderQuality.Console
             {
                 Awards = new List<Award>
                 {
-                    new Award {Name = "Gov Quality Plus", SellIn = 10, Quality = 20},
-                    new Award {Name = "Blue First", SellIn = 2, Quality = 0},
-                    new Award {Name = "ACME Partner Facility", SellIn = 5, Quality = 7},
-                    new Award {Name = "Blue Distinction Plus", SellIn = 0, Quality = 80},
-                    new Award {Name = "Blue Compare", SellIn = 15, Quality = 20},
-                    new Award {Name = "Top Connected Providres", SellIn = 3, Quality = 6}
+                    new Award {Name = "Gov Quality Plus", ExpiresIn = 10, Quality = 20},
+                    new Award {Name = "Blue First", ExpiresIn = 2, Quality = 0},
+                    new Award {Name = "ACME Partner Facility", ExpiresIn = 5, Quality = 7},
+                    new Award {Name = "Blue Distinction Plus", ExpiresIn = 0, Quality = 80},
+                    new Award {Name = "Blue Compare", ExpiresIn = 15, Quality = 20},
+                    new Award {Name = "Top Connected Providers", ExpiresIn = 3, Quality = 6},
+                    new Award {Name = "Blue Star", ExpiresIn = 30, Quality = 50}
                 }
 
             };
 
-            app.UpdateQuality();
+            while (true)                                                         // Brooks debug
+            {
+                app.UpdateQuality();
 
-            System.Console.ReadKey();
+                System.Console.ReadKey();
+            }
 
         }
 
@@ -46,17 +51,25 @@ namespace ProviderQuality.Console
                         {
                             Awards[i].Quality = Awards[i].Quality - 1;
                         }
+
+                        // Blue Star gets an extra point docked
+                        if (Awards[i].Name == "Blue Star")
+                        {
+                            Awards[i].Quality = Awards[i].Quality - 1;
+                        }
                     }
                 }
+                // This 'else' applies to Blue First and Blue Compare, the two increasers
                 else
                 {
                     if (Awards[i].Quality < 50)
                     {
                         Awards[i].Quality = Awards[i].Quality + 1;
 
+                        // Blue Compare gets 2 more tiers, at 10 days and at 5 days
                         if (Awards[i].Name == "Blue Compare")
                         {
-                            if (Awards[i].SellIn < 11)
+                            if (Awards[i].ExpiresIn < 11)
                             {
                                 if (Awards[i].Quality < 50)
                                 {
@@ -64,7 +77,7 @@ namespace ProviderQuality.Console
                                 }
                             }
 
-                            if (Awards[i].SellIn < 6)
+                            if (Awards[i].ExpiresIn < 6)
                             {
                                 if (Awards[i].Quality < 50)
                                 {
@@ -75,12 +88,14 @@ namespace ProviderQuality.Console
                     }
                 }
 
+                // Blue Distinction Plus doesn't decrease in Quality, just counts down the days
                 if (Awards[i].Name != "Blue Distinction Plus")
                 {
-                    Awards[i].SellIn = Awards[i].SellIn - 1;
+                    Awards[i].ExpiresIn = Awards[i].ExpiresIn - 1;
                 }
 
-                if (Awards[i].SellIn < 0)
+                // When ExpiresIn goes negative, apply the extra decrease
+                if (Awards[i].ExpiresIn < 0)
                 {
                     if (Awards[i].Name != "Blue First")
                     {
@@ -89,6 +104,12 @@ namespace ProviderQuality.Console
                             if (Awards[i].Quality > 0)
                             {
                                 if (Awards[i].Name != "Blue Distinction Plus")
+                                {
+                                    Awards[i].Quality = Awards[i].Quality - 1;
+                                }
+
+                                // Blue Star gets an extra point docked
+                                if (Awards[i].Name == "Blue Star")
                                 {
                                     Awards[i].Quality = Awards[i].Quality - 1;
                                 }
@@ -107,7 +128,49 @@ namespace ProviderQuality.Console
                         }
                     }
                 }
+
+                //switch (Awards[i].Name)
+                //    {
+                //        case "Blue First":
+                //            if (Awards[i].Quality < 50)
+                //            {
+                //                Awards[i].Quality++;
+                //            }
+                //            break;
+
+                //        case "Blue Distinction Plus":
+                //            break;
+
+                //        case "Blue Compare":
+                //            break;
+
+                //        case "Blue Star":
+                //            break;
+
+                //        case "Gov Quality Plus":
+                //        case "ACME Partner Facility":
+                //        case "Top Connected Providers":
+
+                //            break;
+
+                //        default:
+                //            break;
+                //    }
+
+
             }
+
+
+            ///////////////////// Brooks - for debug only
+            IEnumerable<Award> sortedEnum = Awards.OrderBy(award => award.Name);
+            IList<Award> sortedAwardList = sortedEnum.ToList();
+
+            foreach (Award a in sortedAwardList)
+            {
+                System.Console.WriteLine("\n" + a.Name + "\n Exp  " + a.ExpiresIn + "\t Q " + a.Quality);
+            }
+
+            /////////////////////
         }
 
     }
